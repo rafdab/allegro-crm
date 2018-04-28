@@ -1,5 +1,9 @@
 package Intership;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Company {
@@ -37,6 +41,12 @@ public class Company {
 
     public String getCurrentPhone(){ return phoneNumbers.get(phoneNumbers.size() - 1); }
 
+    @Override
+    public boolean equals(Object o) {
+        Company company = (Company) o;
+        return getNIP().equals(company.getNIP()) && getPhoneNumbers().equals(company.getPhoneNumbers()) && getEmailAddresses().equals(company.getEmailAddresses()) && getAddress().equals(company.getAddress()) && getName().equals(company.getName());
+    }
+
     public Company() { }
 
     public Company(String NIP, String name, String address) {
@@ -52,25 +62,34 @@ public class Company {
             if (customer.getCurrentEmail().equals(email)) customer.addEmailAddress("OUTDATED");
         }
         for (Company company : companies){
-            if (company.getCurrentEmail().equals(email)) company.addEmailAddress("OUTDATED");
+            if (company.getCurrentEmail().equals(email) && !company.getNIP().equals(getNIP())) company.addEmailAddress("OUTDATED");
         }
     }
 
-    public String prepareObject(ArrayList<Customer> customers, ArrayList<Company> companies){
+    public String prepareObject(ArrayList<Customer> customers, ArrayList<Company> companies) throws IOException {
         //aktualizacja
         int couter = 0;
         for (Company tmp : companies){
             if (getNIP().equals(tmp.getNIP())){
+                if (this.equals(tmp)) return "EQUAL";
                 ++couter;
-                if (tmp.equals(this)) return "EQUAL";
-                tmp.setName(getName());
-                tmp.setAddress(getAddress());
-                checkEmail(getCurrentEmail(), customers, companies);
-                tmp.addEmailAddress(getCurrentEmail());
-                if (!tmp.getCurrentPhone().equals(getCurrentPhone())) tmp.addPhoneNumber(getCurrentPhone());
+                    tmp.setName(getName());
+                    tmp.setAddress(getAddress());
+                    checkEmail(getCurrentEmail(), customers, companies);
+                    tmp.addEmailAddress(getCurrentEmail());
+                    if (!tmp.getCurrentPhone().equals(getCurrentPhone())) tmp.addPhoneNumber(getCurrentPhone());
             }
         }
-        if (couter == 0) companies.add(this);
+        if (couter == 0){
+            checkEmail(getCurrentEmail(), customers, companies);
+            companies.add(this);
+            File file = new File("output/companies/index.txt");
+            FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(getNIP() + "\n");
+            bufferedWriter.close();
+            fileWriter.close();
+        }
         return getNIP();
     }
 }
