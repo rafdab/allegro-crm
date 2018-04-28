@@ -17,62 +17,75 @@ public class Tool {
         Scanner idScanner = new Scanner(idList);
         Customer customer = null;
         while (idScanner.hasNextLine()){
-            customer = new Customer();
-            customer.setId(idScanner.nextLine());
+            String id = idScanner.nextLine();
+            if (!id.equals("")) {
+                customer = new Customer();
+                customer.setId(id);
 
-            Scanner data = new Scanner("output/customers/" + customer.getId() + "/data.txt");
-            Scanner email = new Scanner("output/customers/" + customer.getId() + "/email.txt");
-            Scanner phone = new Scanner("output/customers/" + customer.getId() + "/phone.txt");
-            Scanner login = new Scanner("output/customers/" + customer.getId() + "/login.txt");
-            ArrayList<String> emailList = new ArrayList<String>();
-            ArrayList<String> phoneList = new ArrayList<String>();
-            ArrayList<String> loginList = new ArrayList<String>();
+                File dataF = new File("output/customers/" + customer.getId() + "/data.txt");
+                File emailF = new File("output/customers/" + customer.getId() + "/email.txt");
+                File phoneF = new File("output/customers/" + customer.getId() + "/phone.txt");
+                File loginF = new File("output/customers/" + customer.getId() + "/login.txt");
+                Scanner data = new Scanner(dataF);
+                Scanner email = new Scanner(emailF);
+                Scanner phone = new Scanner(phoneF);
+                Scanner login = new Scanner(loginF);
+                ArrayList<String> emailList = new ArrayList<String>();
+                ArrayList<String> phoneList = new ArrayList<String>();
+                ArrayList<String> loginList = new ArrayList<String>();
 
-            while (email.hasNextLine()) emailList.add(email.nextLine());
-            while (phone.hasNextLine()) phoneList.add(phone.nextLine());
-            while (login.hasNextLine()) loginList.add(login.nextLine());
+                while (email.hasNextLine()) emailList.add(email.nextLine());
+                while (phone.hasNextLine()) phoneList.add(phone.nextLine());
+                while (login.hasNextLine()) loginList.add(login.nextLine());
 
-            customer.setName(data.nextLine());
-            customer.setSurname(data.nextLine());
-            customer.setAddress(data.nextLine());
-            customer.setEmailAddresses(emailList);
-            customer.setPhoneNumbers(phoneList);
-            customer.setLoginList(loginList);
+                customer.setName(data.nextLine());
+                customer.setSurname(data.nextLine());
+                customer.setAddress(data.nextLine());
+                customer.setEmailAddresses(emailList);
+                customer.setPhoneNumbers(phoneList);
+                customer.setLoginList(loginList);
 
-            data.close();
-            email.close();
-            phone.close();
-            login.close();
+                data.close();
+                email.close();
+                phone.close();
+                login.close();
 
-            customers.add(customer);
+                customers.add(customer);
+            }
         }
         idScanner.close();
 
         Scanner NIPScanner = new Scanner(NIPList);
         Company company = null;
-        while (NIPScanner.hasNextLine()){
-            company = new Company();
-            company.setNIP(NIPScanner.nextLine());
+        while (NIPScanner.hasNextLine()) {
+            String id = NIPScanner.nextLine();
+            if (!id.equals("")) {
+                company = new Company();
+                company.setNIP(id);
 
-            Scanner data = new Scanner("output/companies/" + company.getNIP() + "/data.txt");
-            Scanner email = new Scanner("output/companies/" + company.getNIP() + "/email.txt");
-            Scanner phone = new Scanner("output/companies/" + company.getNIP() + "/phone.txt");
-            ArrayList<String> emailList = new ArrayList<String>();
-            ArrayList<String> phoneList = new ArrayList<String>();
+                File dataF = new File("output/companies/" + company.getNIP() + "/data.txt");
+                File emailF = new File("output/companies/" + company.getNIP() + "/email.txt");
+                File phoneF = new File("output/companies/" + company.getNIP() + "/phone.txt");
+                Scanner data = new Scanner(dataF);
+                Scanner email = new Scanner(emailF);
+                Scanner phone = new Scanner(phoneF);
+                ArrayList<String> emailList = new ArrayList<String>();
+                ArrayList<String> phoneList = new ArrayList<String>();
 
-            while (email.hasNextLine()) emailList.add(email.nextLine());
-            while (phone.hasNextLine()) phoneList.add(phone.nextLine());
+                while (email.hasNextLine()) emailList.add(email.nextLine());
+                while (phone.hasNextLine()) phoneList.add(phone.nextLine());
 
-            company.setName(data.nextLine());
-            company.setAddress(data.nextLine());
-            company.setEmailAddresses(emailList);
-            company.setPhoneNumbers(phoneList);
+                company.setName(data.nextLine());
+                company.setAddress(data.nextLine());
+                company.setEmailAddresses(emailList);
+                company.setPhoneNumbers(phoneList);
 
-            data.close();
-            email.close();
-            phone.close();
+                data.close();
+                email.close();
+                phone.close();
 
-            customers.add(customer);
+                customers.add(customer);
+            }
         }
         NIPScanner.close();
     }
@@ -119,7 +132,7 @@ public class Tool {
         return address;
     }
 
-    private static int saveCustomer(ArrayList<String> entry, int argc, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave){
+    private static int saveCustomer(ArrayList<String> entry, int argc, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave) throws IOException {
         Customer customer = new Customer(
                 entry.get(0),
                 entry.get(1),
@@ -128,28 +141,28 @@ public class Tool {
 
         customer.addLogin(entry.get(4));
         customer.addEmailAddress(entry.get(3));
-        customer.addPhoneNumber(entry.get(6));
-        if (argc > 10) customer.addPhoneNumber(entry.get(7));
+        customer.addPhoneNumber(entry.get(5));
+        if (argc > 10) customer.addPhoneNumber(entry.get(6));
         String flag = customer.prepareObject(customers, companies);
         if (!flag.equals("EQUAL"))toSave.add(flag);
         return 0;
     }
 
-    private static int saveCompany(ArrayList<String> entry, int argc, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave){
+    private static int saveCompany(ArrayList<String> entry, int argc, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave) throws IOException {
         Company company = new Company(
                 entry.get(0),
                 entry.get(1),
                 concatAddress(entry, argc));
 
         company.addEmailAddress(entry.get(2));
-        company.addPhoneNumber(entry.get(4));
-        if (argc > 8) company.addPhoneNumber(entry.get(5));
+        company.addPhoneNumber(entry.get(3));
+        if (argc > 8) company.addPhoneNumber(entry.get(4));
         String flag = company.prepareObject(customers, companies);
         if (!flag.equals("EQUAL"))toSave.add(flag);
         return 0;
     }
 
-    static int processEntry(ArrayList<String> entry, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave){
+    static int processEntry(ArrayList<String> entry, ArrayList<Customer> customers, ArrayList<Company> companies, ArrayList<String> toSave) throws IOException {
         switch (entry.size()){
             case 10: return saveCustomer(entry, 10, customers, companies, toSave);
             case 11: return saveCustomer(entry, 11, customers, companies, toSave);

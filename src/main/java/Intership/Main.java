@@ -2,11 +2,12 @@ package Intership;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         File baza = new File("database.tsv");
         Scanner in = new Scanner(baza);
         int counter = 0;
@@ -31,6 +32,6 @@ public class Main {
         }
         in.close();
 
-        //zapis wszystkich klientów i firm do struktury -> zrób liste modyfikowanych i nowych i nadpisz tylko tych
+        Saver.saveData(customers, companies, toSave);
     }
 }
